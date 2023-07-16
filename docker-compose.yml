@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+
+  www:
+    container_name: demodocker_www
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - demodocker_db
+    volumes:
+      - .:/var/www/html/
+    ports:
+      - '80:80'
+
+  demodocker_db:
+    container_name: demodocker_db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demodocker
+      MYSQL_USER: MYSQL_USER
+      MYSQL_PASSWORD: MYSQL_PASSWORD
+    volumes:
+      - ./ms_data:/var/lib/mysql/
+    ports:
+      - '9906:3306'
+
+  demodocker_pmadm:
+    container_name: demodocker_pmadm
+    image: phpmyadmin
+    ports:
+      - '81:80'
+    environment:
+      PMA_HOST: demodocker_db
+    depends_on:
+      - demodocker_db
+
+volumes:
+  data:
+    name: demodocker_www
+  ms_data:
+    name: demodocker_mysql
